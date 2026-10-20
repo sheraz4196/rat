@@ -1,5 +1,7 @@
 # v0.2 manual acceptance
 
+For commands starting with `git clone` on Windows, Linux and macOS, use [HUMAN_TESTING.md](HUMAN_TESTING.md). Record the actual commit and platform results; the checklist below remains the detailed acceptance scope.
+
 Use disposable profiles first. This checklist is not a claim that interactive or cross-platform acceptance has passed. Automated results are recorded in [V0.2_IMPLEMENTATION.md](V0.2_IMPLEMENTATION.md).
 
 - [ ] Build/install into a clean environment; check both `rat --version` and `python -m rat --version`.
