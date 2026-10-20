@@ -11,6 +11,56 @@ Record `git rev-parse HEAD` before testing. For a preview branch, check out the 
 
 If Crux is already installed, follow [MIGRATING.md](MIGRATING.md) first. Start in a fresh terminal tab and use the disposable profile/configuration below before changing your normal shell. First complete the installation section for your OS, then return to the shared checks. Do not run all three OS installation sections.
 
+## Windows installation and cleanup
+
+Use native PowerShell 7 in Windows Terminal, not WSL or cmd. Check `py --version` (3.11+), `git --version`, and `$PSVersionTable.PSVersion`. If `py` is unavailable but `python` exists, substitute `python` for `py`. Install missing Python/Git/PowerShell before continuing. Windows PowerShell 5.1 can be tested as a separate additional host, but record it separately from PowerShell 7.
+
+Open a dedicated test tab. From the cloned repository:
+
+```powershell
+py -m venv .venv-test
+& .\.venv-test\Scripts\python.exe -m pip install '.[dev]'
+$env:PATH = "$PWD\.venv-test\Scripts;" + $env:PATH
+$env:RAT_TEST_DIR = Join-Path ([IO.Path]::GetTempPath()) ("rat human test-" + [guid]::NewGuid())
+New-Item -ItemType Directory -Path $env:RAT_TEST_DIR | Out-Null
+$env:APPDATA = Join-Path $env:RAT_TEST_DIR 'config'
+$env:RAT_TEST_PROFILE = Join-Path $env:RAT_TEST_DIR 'profile.ps1'
+rat install --shell powershell --profile "$env:RAT_TEST_PROFILE" --dry-run
+[IO.File]::WriteAllText($env:RAT_TEST_PROFILE, "# rat human test`n")
+Copy-Item -LiteralPath $env:RAT_TEST_PROFILE -Destination (Join-Path $env:RAT_TEST_DIR 'original.ps1')
+rat install --shell powershell --profile "$env:RAT_TEST_PROFILE" --yes
+rat install --shell powershell --profile "$env:RAT_TEST_PROFILE" --yes
+pwsh -NoLogo -NoProfile -NoExit -Command '. $env:RAT_TEST_PROFILE'
+```
+
+No activation script is required. Expected: dry run does not create the profile; installation creates one Rat block and a `.rat-backup`; a second installation keeps both unchanged. The child PowerShell displays Rat's prompt. Run the shared checks inside it.
+
+If policy blocks dot-sourcing, run `Get-ExecutionPolicy -List` and report the result. Do not bypass a managed policy. For your personal machine, see the documented CurrentUser `RemoteSigned` option in [installation.md](installation.md), record the previous policy, and restore it afterward if changed. This guide does not require a machine-wide policy change.
+
+Check pipes and redirection:
+
+```powershell
+rat ls --json | ConvertFrom-Json | Format-List
+rat ls > (Join-Path $env:RAT_TEST_DIR 'listing.txt')
+$text = Get-Content -Raw (Join-Path $env:RAT_TEST_DIR 'listing.txt')
+if ($text.Contains([string][char]27)) { throw 'Unexpected terminal escape in redirected output' }
+Get-Command git, ls, cat
+```
+
+Expected: JSON parses and redirected text contains no escape character. Native commands and PowerShell aliases remain unchanged; native wrappers are unsupported. Check that `$LASTEXITCODE` from a native failing command survives prompt rendering. Test PowerShell 7 and Windows PowerShell separately if claiming both.
+
+Type `exit` once to leave the child shell, then:
+
+```powershell
+rat uninstall --shell powershell --profile "$env:RAT_TEST_PROFILE" --yes
+$original = Get-FileHash -LiteralPath (Join-Path $env:RAT_TEST_DIR 'original.ps1')
+$removed = Get-FileHash -LiteralPath $env:RAT_TEST_PROFILE
+if ($original.Hash -ne $removed.Hash) { throw 'Uninstall changed unrelated profile content' }
+rat uninstall --shell powershell --profile "$env:RAT_TEST_PROFILE" --yes
+```
+
+Expected: exact original profile bytes restored; second uninstall is a no-op. Close the dedicated tab after completing all checks to discard temporary PATH/APPDATA changes. Inspect and then remove `.venv-test` and the directory recorded in `$env:RAT_TEST_DIR` when no longer needed. Your real `$PROFILE` should not have changed during this disposable test.
+
 ## Linux installation and cleanup (any distribution)
 
 Use Bash or Zsh. Fish and cmd integration are unsupported. Check `python3 --version` (3.11+), `git --version` and `bash --version`. Install missing Python/pip/venv/Git using your distribution's package manager. On older releases, install a supported Python separately; package names vary by distribution.
