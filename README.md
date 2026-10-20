@@ -2,7 +2,7 @@
 
 Make the terminal yours. Rat is a local-first terminal enhancement toolkit for Python 3.11+. It runs inside your existing shell and terminal, without an account, backend, telemetry, or runtime network connection.
 
-The first release is **v0.1.0**, under the [MIT license](LICENSE), and includes the v0.2 implementation plan. See [V0.2_IMPLEMENTATION.md](V0.2_IMPLEMENTATION.md) for verification and plan coverage, [installation.md](installation.md) for platform setup, and [RELEASE.md](RELEASE.md) for release preparation.
+The next release is **v0.1.1**, under the [MIT license](LICENSE): Crux renamed to Rat. Existing users should follow [MIGRATING.md](MIGRATING.md) before switching. For hands-on Windows, Linux and macOS checks, start with the clone command in [HUMAN_TESTING.md](HUMAN_TESTING.md). See [installation.md](installation.md) for platform setup and [RELEASE.md](RELEASE.md) for release preparation. The earlier implementation evidence is retained in [V0.2_IMPLEMENTATION.md](V0.2_IMPLEMENTATION.md).
 
 ## Install
 
