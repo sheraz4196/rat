@@ -1,7 +1,11 @@
-# CRUX v0.1.0
+# RAT v0.1.1
 
-First public release of CRUX, a local-first terminal enhancement toolkit for Python 3.11+.
+Crux is now Rat, a local-first terminal enhancement toolkit for Python 3.11+. This release supersedes Crux v0.1.0 without changing its historical tag.
 
+- Renamed CLI/module to `rat` and distribution to `rat-terminal`; configuration, profile markers, backups and installer paths use the new name.
+- Refuse installation over an existing Crux profile block; follow [MIGRATING.md](MIGRATING.md) before switching.
+- Clone-first [human testing guide](HUMAN_TESTING.md) for Windows, Linux and macOS.
+- Release publication waits for Ubuntu/macOS/Windows checks on Python 3.11 and 3.14.
 - Directory listings, bounded trees, Git status summaries, and a syntax-highlighted file viewer.
 - Bash, Zsh, and PowerShell prompt integration with guarded profile edits and backups.
 - Five themes, editable TOML configuration, and read-only diagnostics.
@@ -14,10 +18,10 @@ First public release of CRUX, a local-first terminal enhancement toolkit for Pyt
 Download the attached wheel, then run:
 
 ```sh
-pipx install ./crux_terminal-0.1.0-py3-none-any.whl
+pipx install ./rat_terminal-0.1.1-py3-none-any.whl
 pipx ensurepath
-crux --version
-crux install --shell bash --yes
+rat --version
+rat install --shell bash --yes
 ```
 
 Use `--shell zsh` for Zsh or `--shell powershell --profile "$PROFILE"` for PowerShell. Dependency installation needs a package index or local wheels; runtime works offline. This release does not publish to PyPI.
