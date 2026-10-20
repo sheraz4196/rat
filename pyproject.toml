@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rat-terminal"
-version = "0.1.0"
+version = "0.1.1"
 description = "Local-first terminal enhancement toolkit"
 license = "MIT"
 license-files = ["LICENSE"]

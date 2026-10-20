@@ -37,7 +37,7 @@ def test_tree_bounds(tmp_path):
 
 def test_real_cli():
     result = subprocess.run([sys.executable, '-m', 'rat', '--version'], capture_output=True, text=True)
-    assert result.returncode == 0 and '0.1.0' in result.stdout
+    assert result.returncode == 0 and '0.1.1' in result.stdout
     result = subprocess.run([sys.executable, '-m', 'rat', 'prompt', '--status', '7'], capture_output=True, text=True)
     assert result.returncode == 0 and 'exit 7' in result.stdout
 
