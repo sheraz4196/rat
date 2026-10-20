@@ -120,6 +120,57 @@ deactivate
 
 Close the dedicated tab to discard the exported test configuration and GNOME environment change. You can delete the repository's `.venv-test` and the temporary directory printed by `echo "$RAT_TEST_DIR"` after inspecting the paths; neither is your normal Python environment or Rat config. Keep failure logs before cleanup.
 
+## macOS installation and cleanup
+
+Use Terminal.app with Zsh first; test iTerm2 or other emulators as separate results. Check `python3 --version` (3.11+), `git --version`, and `zsh --version`. Install missing tools before continuing. Use a supported Python from python.org or your package manager, not an old system Python. Record Intel versus Apple Silicon.
+
+Open a dedicated test tab and run from the cloned repository:
+
+```sh
+python3 -m venv .venv-test
+. .venv-test/bin/activate
+python -m pip install '.[dev]'
+export RAT_TEST_DIR="$(mktemp -d)"
+export XDG_CONFIG_HOME="$RAT_TEST_DIR/config"
+mkdir "$RAT_TEST_DIR/zsh"
+rat install --shell zsh --profile "$RAT_TEST_DIR/zsh/.zshrc" --dry-run
+printf '# rat human test\n' > "$RAT_TEST_DIR/zsh/.zshrc"
+cp "$RAT_TEST_DIR/zsh/.zshrc" "$RAT_TEST_DIR/original"
+rat install --shell zsh --profile "$RAT_TEST_DIR/zsh/.zshrc" --yes
+rat install --shell zsh --profile "$RAT_TEST_DIR/zsh/.zshrc" --yes
+ZDOTDIR="$RAT_TEST_DIR/zsh" zsh -d -i
+```
+
+Expected: dry run leaves the profile absent; installation creates one Rat block and a `.rat-backup`; repeat install keeps both unchanged. The child Zsh uses the disposable `.zshrc` rather than your normal one. Run the shared checks inside it. If using this procedure on Linux/Zsh, also unset `GNOME_TERMINAL_SERVICE` in the dedicated tab before launching the child to avoid real GNOME profile synchronization.
+
+Check pipes and redirection:
+
+```sh
+rat ls --json | python -m json.tool
+rat ls > "$RAT_TEST_DIR/listing.txt"
+python -c 'import os; from pathlib import Path; assert "\x1b" not in (Path(os.environ["RAT_TEST_DIR"])/"listing.txt").read_text()'
+```
+
+Try themes and reset in each recorded emulator. macOS terminal profile settings are not written by Rat. Palette/background/cursor support varies; record partial support and screenshot readability. Test ASCII and Unicode names, paths with spaces, and terminal resizing during the file viewer.
+
+Type `exit` once to leave the child Zsh, then:
+
+```sh
+rat uninstall --shell zsh --profile "$RAT_TEST_DIR/zsh/.zshrc" --yes
+cmp "$RAT_TEST_DIR/zsh/.zshrc" "$RAT_TEST_DIR/original"
+rat uninstall --shell zsh --profile "$RAT_TEST_DIR/zsh/.zshrc" --yes
+```
+
+Expected: `cmp` exits zero; repeat uninstall is a no-op. The new prompt disappears when the disposable shell closes. For Bash testing, repeat the Linux disposable Bash procedure using macOS's installed Bash and record its version; do not assume Zsh acceptance covers Bash.
+
+Also run the source-installer check if testing that installation method:
+
+```sh
+python scripts/verify_installer.py --source .
+```
+
+After all shared checks, `deactivate` in the parent shell, then close the dedicated tab to discard test environment variables. Inspect and remove `.venv-test` and the directory printed by `echo "$RAT_TEST_DIR"` when finished. Your normal `.zshrc` and terminal profile should remain unchanged during the disposable test.
+
 ## Shared command checks
 
 Run from the repository root after activating the testing environment for your OS:
