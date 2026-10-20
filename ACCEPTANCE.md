@@ -2,15 +2,15 @@
 
 Use disposable profiles first. This checklist is not a claim that interactive or cross-platform acceptance has passed. Automated results are recorded in [V0.2_IMPLEMENTATION.md](V0.2_IMPLEMENTATION.md).
 
-- [ ] Build/install into a clean environment; check both `crux --version` and `python -m crux --version`.
+- [ ] Build/install into a clean environment; check both `rat --version` and `python -m rat --version`.
 - [ ] Run public help, doctor text/JSON, config text/JSON/get/set/reset, ls/tree text/JSON, Git status in clean/dirty repositories, and multi-file view.
 - [ ] Verify all five themes, `NO_COLOR`, `TERM=dumb`, and redirected output without terminal controls.
-- [ ] Preview `crux install --shell SHELL --profile PATH --dry-run`; inspect the prompt replacement explanation and native-wrapper opt-in policy.
+- [ ] Preview `rat install --shell SHELL --profile PATH --dry-run`; inspect the prompt replacement explanation and native-wrapper opt-in policy.
 - [ ] Install into a disposable profile; confirm one-time backup, file mode, repeated install, malformed marker refusal and exact removal.
 - [ ] Verify aliases/functions named git/ls/tree/cat, unrelated aliases/functions, PATH, environment, stdin, stdout, pipes and redirection before/after default install and uninstall.
 - [ ] Repeat with Bash/Zsh `--enhance-commands`; confirm existing aliases/functions are skipped and exact supported TTY routes work.
 - [ ] Check unsupported arguments, stdin/no operands/non-regular cat operands, command substitution, and native `command NAME` bypass with opt-in wrappers.
-- [ ] Check `--keep-prompt` with an existing prompt framework and `crux_restore_prompt` in the current session. A user-owned recovery helper must remain unchanged.
+- [ ] Check `--keep-prompt` with an existing prompt framework and `rat_restore_prompt` in the current session. A user-owned recovery helper must remain unchanged.
 - [ ] Reopen the shell after updating/removing integration, particularly when upgrading from v0.1's native wrappers.
 - [ ] Check completion, history, built-ins, background jobs, job control and shell scripting.
 - [ ] Check Ctrl+C, Ctrl+D, Ctrl+Z, Ctrl+L and arrow keys in real interactive terminals.
