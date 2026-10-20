@@ -14,4 +14,6 @@ Artifacts are `dist/rat_terminal-0.1.1-py3-none-any.whl`, `dist/rat_terminal-0.1
 
 The canonical GitHub repository was confirmed as `sheraz4196/rat`, and the original Crux URL redirects to it. The local origin now uses the Rat SSH URL. The rename commits are pushed on `fix-renaming-for-launch`.
 
-Hosted Windows/macOS outcomes must be checked in the actual Actions run before claiming they passed. The release workflow now depends on all six OS/Python combinations. Interactive desktop acceptance remains unverified; use the clone-first human guide and record each platform/shell/terminal result separately.
+Hosted CI for candidate `93e9a75` passed all six combinations: Ubuntu, macOS and Windows on Python 3.11 and 3.14. Evidence: [successful matrix run](https://github.com/sheraz4196/rat/actions/runs/39508424418). Both edited workflows also passed `actionlint` v1.7.7. The release workflow independently repeats the full matrix for the tag before publishing.
+
+Interactive desktop acceptance remains unverified; use the clone-first human guide and record each platform/shell/terminal result separately. Automated CI passing does not establish visual terminal behavior.
