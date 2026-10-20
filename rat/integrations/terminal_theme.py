@@ -7,8 +7,8 @@ import shutil
 import subprocess
 from uuid import UUID
 
-from crux.core.storage import atomic_write
-from crux.render.theme import TERMINAL_THEMES
+from rat.core.storage import atomic_write
+from rat.render.theme import TERMINAL_THEMES
 
 MANAGED_KEYS = (
     'background-color', 'foreground-color', 'palette', 'cursor-background-color',
@@ -126,7 +126,7 @@ def restore_gnome_profile(backup_directory, dry_run=False):
     if current == original:
         return True  # Already restored, also lets the CLI disable prompt palettes.
     if current != expected:
-        raise RuntimeError('GNOME colors changed since CRUX last applied them; refusing to overwrite newer settings. Keep the backup for manual recovery.')
+        raise RuntimeError('GNOME colors changed since RAT last applied them; refusing to overwrite newer settings. Keep the backup for manual recovery.')
     if dry_run:
         return True
     for key, value in original.items():

@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 import pytest
 from typer.testing import CliRunner
-from crux.cli.main import app
-from crux.config.manager import DEFAULTS, load, update
+from rat.cli.main import app
+from rat.config.manager import DEFAULTS, load, update
 
 runner = CliRunner()
 
@@ -51,11 +51,11 @@ def test_atomic_failure_and_mode(tmp_path):
     path.write_text('[general]\nicons = false\n')
     if os.name != 'nt':
         path.chmod(0o640)
-    with patch('crux.core.storage.os.replace', side_effect=PermissionError('denied')):
+    with patch('rat.core.storage.os.replace', side_effect=PermissionError('denied')):
         with pytest.raises(PermissionError):
             update({'general.icons': True}, path)
     assert path.read_text() == '[general]\nicons = false\n'
-    assert not list(tmp_path.glob('.crux-*'))
+    assert not list(tmp_path.glob('.rat-*'))
     update({'general.icons': True}, path)
     if os.name != 'nt':
         assert path.stat().st_mode & 0o777 == 0o640
@@ -80,8 +80,8 @@ def test_missing_file_header_at_eof_and_symlink(tmp_path):
 
 
 def test_permission_error_is_actionable():
-    with patch('crux.config.manager.update', side_effect=PermissionError('denied')):
+    with patch('rat.config.manager.update', side_effect=PermissionError('denied')):
         # Patch the imported CLI binding rather than a real personal directory.
-        with patch('crux.cli.config.update', side_effect=PermissionError('denied')):
+        with patch('rat.cli.config.update', side_effect=PermissionError('denied')):
             result = runner.invoke(app, ['config', 'set', 'general.icons', 'false'])
     assert result.exit_code == 1 and 'denied' in result.output and 'Traceback' not in result.output

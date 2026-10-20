@@ -1,11 +1,11 @@
 from rich.console import Console
 from rich.text import Text
 from rich.theme import Theme
-from crux.core.terminal import detect
-from crux.render.theme import THEMES
+from rat.core.terminal import detect
+from rat.render.theme import THEMES
 
 
-from crux.core.text import safe_text
+from rat.core.text import safe_text
 
 
 class Renderer:

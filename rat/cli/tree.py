@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 import typer
-from crux.cli.main import app
-from crux.cli.common import context, fail
-from crux.core.filesystem import scan, entry_data
+from rat.cli.main import app
+from rat.cli.common import context, fail
+from rat.core.filesystem import scan, entry_data
 
 
 @app.command('tree')

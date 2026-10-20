@@ -9,7 +9,7 @@ def atomic_write(path, text):
     if path.is_symlink():
         raise ValueError(f'Refusing to replace symlink: {path}')
     path.parent.mkdir(parents=True, exist_ok=True)
-    descriptor, temporary = tempfile.mkstemp(prefix='.crux-', dir=path.parent)
+    descriptor, temporary = tempfile.mkstemp(prefix='.rat-', dir=path.parent)
     try:
         with os.fdopen(descriptor, 'w', encoding='utf-8', newline='') as stream:
             stream.write(text)

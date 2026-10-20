@@ -2,7 +2,7 @@ import json
 import subprocess
 import sys
 from typer.testing import CliRunner
-from crux.cli.main import app
+from rat.cli.main import app
 
 runner = CliRunner()
 
@@ -36,16 +36,16 @@ def test_tree_bounds(tmp_path):
 
 
 def test_real_cli():
-    result = subprocess.run([sys.executable, '-m', 'crux', '--version'], capture_output=True, text=True)
+    result = subprocess.run([sys.executable, '-m', 'rat', '--version'], capture_output=True, text=True)
     assert result.returncode == 0 and '0.1.0' in result.stdout
-    result = subprocess.run([sys.executable, '-m', 'crux', 'prompt', '--status', '7'], capture_output=True, text=True)
+    result = subprocess.run([sys.executable, '-m', 'rat', 'prompt', '--status', '7'], capture_output=True, text=True)
     assert result.returncode == 0 and 'exit 7' in result.stdout
 
 
 def test_management_commands_and_theme(tmp_path, monkeypatch):
     monkeypatch.setenv('XDG_CONFIG_HOME', str(tmp_path))
     monkeypatch.setenv('APPDATA', str(tmp_path))
-    from crux.config.manager import load
+    from rat.config.manager import load
     path = load().path
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text('# keep me\n[general]\nicons = false\n[prompt]\nshow_git = false\n')
@@ -67,7 +67,7 @@ def test_management_commands_and_theme(tmp_path, monkeypatch):
 def test_theme_applies_to_terminal(monkeypatch):
     import io
     from unittest.mock import patch
-    from crux.cli.theme import theme
+    from rat.cli.theme import theme
     import typer
 
     class Terminal(io.StringIO):

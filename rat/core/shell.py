@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from crux.core.platform import system_info
+from rat.core.platform import system_info
 
 
 def detect_shell():

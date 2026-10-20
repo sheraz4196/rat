@@ -4,9 +4,9 @@ from unittest.mock import patch
 
 import pytest
 from typer.testing import CliRunner
-from crux.cli.main import app
-from crux.core.diagnostics import integration_health
-from crux.integrations.manager import edit_profile
+from rat.cli.main import app
+from rat.core.diagnostics import integration_health
+from rat.integrations.manager import edit_profile
 
 from test_core import repo  # noqa: F401 -- shared real-Git fixture
 
@@ -74,14 +74,14 @@ def test_tree_json_bounds_and_symlink(tmp_path):
 
 
 def test_tree_inaccessible_child_json(tmp_path):
-    from crux.core.filesystem import scan
+    from rat.core.filesystem import scan
     child = tmp_path / 'child'
     child.mkdir()
     def selective(path, hidden):
         if path == child:
             raise PermissionError('denied')
         return scan(path, hidden)
-    with patch('crux.cli.tree.scan', side_effect=selective):
+    with patch('rat.cli.tree.scan', side_effect=selective):
         result = runner.invoke(app, ['tree', str(tmp_path), '--json'])
     assert result.exit_code == 0
     assert json.loads(result.stdout)['errors'] == [{'path': str(child), 'error': 'denied'}]
@@ -93,24 +93,24 @@ def test_doctor_schema_profile_health_and_no_writes(tmp_path):
     data = json.loads(result.stdout)
     assert not profile.exists()
     assert {'system', 'shell', 'terminal', 'tools', 'virtual_environment', 'configuration', 'warnings'} <= data.keys()
-    assert data['crux']['version'] and data['integration']['status'] == 'not installed'
+    assert data['rat']['version'] and data['integration']['status'] == 'not installed'
     assert {'session', 'gsettings', 'dconf'} == data['gnome_profile_sync'].keys()
     edit_profile(profile, 'bash', keep_prompt=True)
     before = profile.read_bytes()
     data = json.loads(runner.invoke(app, ['doctor', '--shell', 'bash', '--profile', str(profile), '--json']).stdout)
     assert data['integration']['status'] == 'installed' and data['integration']['prompt_preserved']
     assert profile.read_bytes() == before
-    profile.write_text('# >>> crux >>>\nbroken\n')
+    profile.write_text('# >>> rat >>>\nbroken\n')
     assert integration_health('bash', profile)['status'] == 'invalid'
     assert integration_health('fish')['status'] == 'unsupported'
     assert integration_health('powershell')['status'] == 'profile required'
-    profile.write_text('# >>> crux >>>\nunalias git ls tree cat\n# <<< crux <<<\n')
+    profile.write_text('# >>> rat >>>\nunalias git ls tree cat\n# <<< rat <<<\n')
     assert integration_health('bash', profile)['status'] == 'legacy integration'
 
 
 def test_palette_reset_no_redirected_controls_and_prompt_opt_out(tmp_path):
-    from crux.config.manager import load
-    from crux.prompt.builder import build
+    from rat.config.manager import load
+    from rat.prompt.builder import build
     result = runner.invoke(app, ['theme', '--reset-terminal'])
     assert result.exit_code == 0 and '\x1b' not in result.stdout
     config = load()
@@ -136,7 +136,7 @@ def test_reset_terminal_controls_only_when_appropriate(monkeypatch):
     import io
     import typer
     from typer.main import get_command
-    from crux.cli.theme import theme
+    from rat.cli.theme import theme
     class Terminal(io.StringIO):
         def isatty(self):
             return True
@@ -157,7 +157,7 @@ def test_reset_terminal_controls_only_when_appropriate(monkeypatch):
 
 
 def test_errors_and_configuration_warnings_escape_terminal_controls(tmp_path):
-    from crux.config.manager import load
+    from rat.config.manager import load
     result = runner.invoke(app, ['tree', str(tmp_path / 'missing\x1b[2J')])
     assert result.exit_code == 1 and '\x1b' not in result.output
     result = runner.invoke(app, ['config', 'set', 'unknown.\x1b[2J', 'false'])

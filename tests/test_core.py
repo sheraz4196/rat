@@ -5,24 +5,24 @@ import subprocess
 from pathlib import Path
 from unittest.mock import patch
 import pytest
-from crux.config.manager import load
-from crux.core.filesystem import scan, human_size
-from crux.core.platform import config_path, system_info
-from crux.core.terminal import detect
-from crux.core.environment import virtual_environment, tool_version, duplicate_paths
-from crux.core.git import status, in_repository
-from crux.core.text import safe_text
-from crux.prompt.builder import build
+from rat.config.manager import load
+from rat.core.filesystem import scan, human_size
+from rat.core.platform import config_path, system_info
+from rat.core.terminal import detect
+from rat.core.environment import virtual_environment, tool_version, duplicate_paths
+from rat.core.git import status, in_repository
+from rat.core.text import safe_text
+from rat.prompt.builder import build
 
 
 def test_platform(monkeypatch, tmp_path):
     assert system_info()['Architecture']
     monkeypatch.setenv('XDG_CONFIG_HOME', str(tmp_path))
     with patch('platform.system', return_value='Linux'):
-        assert config_path() == tmp_path / 'crux/config.toml'
+        assert config_path() == tmp_path / 'rat/config.toml'
     monkeypatch.setenv('APPDATA', str(tmp_path))
     with patch('platform.system', return_value='Windows'):
-        assert config_path() == tmp_path / 'CRUX/config.toml'
+        assert config_path() == tmp_path / 'RAT/config.toml'
 
 
 def test_terminal(monkeypatch):
@@ -76,7 +76,7 @@ def test_environment(monkeypatch):
     assert virtual_environment() == 'my-env'
     monkeypatch.setenv('PATH', os.pathsep.join(['same', 'same']))
     assert duplicate_paths()
-    assert tool_version('crux_nonexistent_tool') is None
+    assert tool_version('rat_nonexistent_tool') is None
 
 
 @pytest.fixture
@@ -125,7 +125,7 @@ def test_prompt(tmp_path, monkeypatch, repo):
     assert '\x1b' not in safe_text('bad\x1b[2J')
     config = load()
     config.data['prompt']['show_git'] = False
-    with patch('crux.prompt.builder.status', side_effect=AssertionError):
+    with patch('rat.prompt.builder.status', side_effect=AssertionError):
         build(path=repo[0], configuration=config)
 
 
@@ -141,7 +141,7 @@ def test_git_ahead_behind_parser():
 def test_optional_prompt_failures(tmp_path):
     (tmp_path / '.git').mkdir()
     (tmp_path / '.git/HEAD').write_text('ref: refs/heads/main')
-    with patch('crux.prompt.builder.status', side_effect=ValueError('timeout')):
+    with patch('rat.prompt.builder.status', side_effect=ValueError('timeout')):
         value = build(path=tmp_path)
         assert value.endswith('> ')
         assert 'main' in value and 'clean' not in value
@@ -157,13 +157,13 @@ def test_prompt_timeout_in_linked_worktree(tmp_path):
     worktree = tmp_path / 'worktree'
     worktree.mkdir()
     (worktree / '.git').write_text('gitdir: ../git metadata\n')
-    with patch('crux.prompt.builder.status', side_effect=ValueError('timeout')):
+    with patch('rat.prompt.builder.status', side_effect=ValueError('timeout')):
         value = build(path=worktree)
     assert 'feature/windows' in value and 'clean' not in value
 
 
 def test_branch_fallback_detached_and_invalid_head(tmp_path):
-    from crux.core.git import current_branch
+    from rat.core.git import current_branch
     directory = tmp_path / '.git'
     directory.mkdir()
     head = directory / 'HEAD'
@@ -216,7 +216,7 @@ def test_terminal_theme_in_shell_prompt(tmp_path, monkeypatch, shell, opening, c
 
 
 def test_output_theme_colors(monkeypatch):
-    from crux.render.renderer import Renderer
+    from rat.render.renderer import Renderer
     class Terminal(io.StringIO):
         encoding = 'utf-8'
         def isatty(self): return True

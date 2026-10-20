@@ -1,6 +1,6 @@
 """End-to-end prompt timing in disposable directories (no latency assertion).
 
-Run with the same Python as CRUX, or pass --executable /path/to/installed/crux.
+Run with the same Python as RAT, or pass --executable /path/to/installed/rat.
 Results include process startup and Git work. No profiles or desktops are edited.
 """
 import argparse
@@ -42,10 +42,10 @@ def main():
     args = parser.parse_args()
     if args.samples < 2:
         parser.error('--samples must be at least 2')
-    command = [str(args.executable.resolve())] if args.executable else [sys.executable, '-m', 'crux']
+    command = [str(args.executable.resolve())] if args.executable else [sys.executable, '-m', 'rat']
     command += ['prompt', '--status', '0', '--shell', 'bash']
     report = {'command': command, 'python': sys.version.split()[0], 'platform': sys.platform, 'target_ms': 50, 'results': {}}
-    with tempfile.TemporaryDirectory(prefix='crux-benchmark-') as temp:
+    with tempfile.TemporaryDirectory(prefix='rat-benchmark-') as temp:
         root = Path(temp)
         outside = root / 'outside'
         outside.mkdir()
@@ -59,7 +59,7 @@ def main():
             def run_git(*arguments):
                 subprocess.run([git, '-C', str(repo), *arguments], capture_output=True, check=True, env=environment, timeout=30)
             run_git('init', '-b', 'main')
-            run_git('config', 'user.name', 'CRUX Benchmark')
+            run_git('config', 'user.name', 'RAT Benchmark')
             run_git('config', 'user.email', 'benchmark@example.invalid')
             (repo / 'tracked').write_text('initial\n')
             run_git('add', '.')
@@ -78,7 +78,7 @@ def main():
             report['results']['repository_missing_tools'] = benchmark(command, repo, {**environment, 'PATH': ''}, args.samples)
         else:
             report['git_scenarios_skipped'] = 'Git unavailable'
-        config = root / 'config' / ('CRUX' if os.name == 'nt' else 'crux') / 'config.toml'
+        config = root / 'config' / ('RAT' if os.name == 'nt' else 'rat') / 'config.toml'
         config.parent.mkdir(parents=True, exist_ok=True)
         config.write_text('invalid TOML !', encoding='utf-8')
         report['results']['invalid_config'] = benchmark(command, outside, environment, args.samples)

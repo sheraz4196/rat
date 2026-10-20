@@ -2,8 +2,8 @@ import copy
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
-from crux.core.platform import config_path
-from crux.render.theme import THEMES
+from rat.core.platform import config_path
+from rat.render.theme import THEMES
 
 DEFAULTS = {
     "general": {"theme": "default", "icons": True, "animations": False, "terminal_palette": True},
@@ -47,7 +47,7 @@ def load(path=None):
 def default_value(key):
     parts = key.split('.')
     if len(parts) != 2 or parts[0] not in DEFAULTS or parts[1] not in DEFAULTS[parts[0]]:
-        raise ValueError(f'Unknown setting: {key}. Use SECTION.KEY from crux config.')
+        raise ValueError(f'Unknown setting: {key}. Use SECTION.KEY from rat config.')
     return DEFAULTS[parts[0]][parts[1]]
 
 
@@ -70,7 +70,7 @@ def update(settings, path=None):
     """
     import json
     import re
-    from crux.core.storage import atomic_write
+    from rat.core.storage import atomic_write
 
     path = Path(path) if path else config_path()
     if path.is_symlink():

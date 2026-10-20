@@ -10,10 +10,10 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
 
-from crux.cli.main import app
-from crux.cli.common import context
-from crux.core.text import safe_text
-from crux.render.code import syntax_theme
+from rat.cli.main import app
+from rat.cli.common import context
+from rat.core.text import safe_text
+from rat.render.code import syntax_theme
 
 MAX_FILE_BYTES = 2 * 1024 * 1024
 

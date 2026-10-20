@@ -1,8 +1,8 @@
 from pathlib import Path
 import typer
-from crux.cli.main import app
-from crux.cli.common import context, fail
-from crux.core.git import status as git_status
+from rat.cli.main import app
+from rat.cli.common import context, fail
+from rat.core.git import status as git_status
 
 subapp = typer.Typer(help='Present local Git information.')
 app.add_typer(subapp, name='git')

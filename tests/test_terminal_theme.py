@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from crux.integrations.terminal_theme import sync_gnome_profile
+from rat.integrations.terminal_theme import sync_gnome_profile
 
 
 def test_profile_sync_preserves_preferences_and_original_backup(tmp_path, monkeypatch):
@@ -26,7 +26,7 @@ def test_profile_sync_preserves_preferences_and_original_backup(tmp_path, monkey
             output = repr(state['background'])
         return subprocess.CompletedProcess(args, 0, stdout=output, stderr='')
 
-    with patch('crux.integrations.terminal_theme.shutil.which', return_value='/usr/bin/tool'), patch('crux.integrations.terminal_theme.subprocess.run', side_effect=run):
+    with patch('rat.integrations.terminal_theme.shutil.which', return_value='/usr/bin/tool'), patch('rat.integrations.terminal_theme.subprocess.run', side_effect=run):
         assert sync_gnome_profile('cobalt', tmp_path)
         state['background'] = '#f5f7fa'
         assert sync_gnome_profile('light', tmp_path)
@@ -39,14 +39,14 @@ def test_profile_sync_preserves_preferences_and_original_backup(tmp_path, monkey
 
 
 def test_other_terminals_do_not_change_desktop_profile(tmp_path):
-    with patch('crux.integrations.terminal_theme.subprocess.run') as run:
+    with patch('rat.integrations.terminal_theme.subprocess.run') as run:
         assert not sync_gnome_profile('cobalt', tmp_path)
     run.assert_not_called()
 
 
 def test_dconf_failed_commit_is_reported(tmp_path, monkeypatch):
     monkeypatch.setenv('GNOME_TERMINAL_SERVICE', ':1.123')
-    with patch('crux.integrations.terminal_theme.shutil.which', return_value='/usr/bin/tool'), patch('crux.integrations.terminal_theme.subprocess.run', return_value=subprocess.CompletedProcess([], 0, stdout='', stderr='failed to commit changes: Permission denied')):
+    with patch('rat.integrations.terminal_theme.shutil.which', return_value='/usr/bin/tool'), patch('rat.integrations.terminal_theme.subprocess.run', return_value=subprocess.CompletedProcess([], 0, stdout='', stderr='failed to commit changes: Permission denied')):
         with pytest.raises(RuntimeError, match='Permission denied'):
             sync_gnome_profile('cobalt', tmp_path)
     assert not list(tmp_path.iterdir())
@@ -80,13 +80,13 @@ def gnome_state(tmp_path, monkeypatch):
         else:
             output = state[args[-1]]
         return subprocess.CompletedProcess(args, 0, stdout=output, stderr='')
-    monkeypatch.setattr('crux.integrations.terminal_theme.shutil.which', lambda name: '/usr/bin/' + name)
-    monkeypatch.setattr('crux.integrations.terminal_theme.subprocess.run', run)
+    monkeypatch.setattr('rat.integrations.terminal_theme.shutil.which', lambda name: '/usr/bin/' + name)
+    monkeypatch.setattr('rat.integrations.terminal_theme.subprocess.run', run)
     return state, calls, profile
 
 
 def test_restore_only_owned_colors_and_repeat(tmp_path, gnome_state):
-    from crux.integrations.terminal_theme import restore_gnome_profile
+    from rat.integrations.terminal_theme import restore_gnome_profile
     state, calls, profile = gnome_state
     sync_gnome_profile('cobalt', tmp_path)
     backup = tmp_path / f'gnome-terminal-{profile}.backup.ini'
@@ -104,7 +104,7 @@ def test_restore_only_owned_colors_and_repeat(tmp_path, gnome_state):
 
 
 def test_restore_refuses_newer_colors_and_legacy_backup(tmp_path, gnome_state):
-    from crux.integrations.terminal_theme import restore_gnome_profile
+    from rat.integrations.terminal_theme import restore_gnome_profile
     state, calls, profile = gnome_state
     sync_gnome_profile('light', tmp_path)
     state['foreground-color'] = "'#userchange'"
@@ -121,27 +121,27 @@ def test_restore_refuses_newer_colors_and_legacy_backup(tmp_path, gnome_state):
 @pytest.mark.parametrize('value', ['', 'invalid-uuid'])
 def test_invalid_profile_does_not_write(tmp_path, monkeypatch, value):
     monkeypatch.setenv('GNOME_TERMINAL_SERVICE', ':1.123')
-    with patch('crux.integrations.terminal_theme.shutil.which', return_value='tool'), patch('crux.integrations.terminal_theme.subprocess.run', return_value=subprocess.CompletedProcess([], 0, stdout=value, stderr='')) as run:
+    with patch('rat.integrations.terminal_theme.shutil.which', return_value='tool'), patch('rat.integrations.terminal_theme.subprocess.run', return_value=subprocess.CompletedProcess([], 0, stdout=value, stderr='')) as run:
         with pytest.raises(RuntimeError, match='valid default profile'):
             sync_gnome_profile('cobalt', tmp_path)
     assert run.call_count == 1 and not list(tmp_path.iterdir())
 
 
 def test_missing_dependencies_and_non_gnome_restore(tmp_path, monkeypatch):
-    from crux.integrations.terminal_theme import restore_gnome_profile
+    from rat.integrations.terminal_theme import restore_gnome_profile
     assert not restore_gnome_profile(tmp_path)
     monkeypatch.setenv('GNOME_TERMINAL_SERVICE', ':1.123')
-    with patch('crux.integrations.terminal_theme.shutil.which', return_value=None):
+    with patch('rat.integrations.terminal_theme.shutil.which', return_value=None):
         with pytest.raises(RuntimeError, match='gsettings and dconf'):
             restore_gnome_profile(tmp_path)
 
 
 def test_restore_failed_write_preserves_recovery_data(tmp_path, gnome_state, monkeypatch):
-    from crux.integrations.terminal_theme import restore_gnome_profile
+    from rat.integrations.terminal_theme import restore_gnome_profile
     state, calls, profile = gnome_state
     sync_gnome_profile('dark', tmp_path)
     files = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
-    from crux.integrations import terminal_theme
+    from rat.integrations import terminal_theme
     run = terminal_theme.subprocess.run
     def fail_write(args, **kwargs):
         if args[1] in ('write', 'reset'):
@@ -155,12 +155,12 @@ def test_restore_failed_write_preserves_recovery_data(tmp_path, gnome_state, mon
 
 def test_state_atomic_write_failure_and_symlink_refusal(tmp_path, gnome_state):
     state, calls, profile = gnome_state
-    with patch('crux.core.storage.os.replace', side_effect=PermissionError('state denied')):
+    with patch('rat.core.storage.os.replace', side_effect=PermissionError('state denied')):
         with pytest.raises(PermissionError):
             sync_gnome_profile('cobalt', tmp_path)
     backup = tmp_path / f'gnome-terminal-{profile}.backup.ini'
     assert backup.exists()
-    assert not list(tmp_path.glob('.crux-*'))
+    assert not list(tmp_path.glob('.rat-*'))
     backup.unlink()
     target = tmp_path / 'untouched'
     try:
@@ -174,8 +174,8 @@ def test_state_atomic_write_failure_and_symlink_refusal(tmp_path, gnome_state):
 
 
 def test_cli_restore_disables_prompt_palette(gnome_state):
-    from crux.config.manager import load
-    from crux.cli.main import app
+    from rat.config.manager import load
+    from rat.cli.main import app
     from typer.testing import CliRunner
     path = load().path
     sync_gnome_profile('cobalt', path.parent)
@@ -187,7 +187,7 @@ def test_cli_restore_disables_prompt_palette(gnome_state):
 
 @pytest.mark.parametrize('text', ['not json', '[]', '{"profile": "wrong", "colors": {}}'])
 def test_corrupt_ownership_state_refused(tmp_path, gnome_state, text):
-    from crux.integrations.terminal_theme import restore_gnome_profile
+    from rat.integrations.terminal_theme import restore_gnome_profile
     state, calls, profile = gnome_state
     sync_gnome_profile('cobalt', tmp_path)
     (tmp_path / f'gnome-terminal-{profile}.applied.json').write_text(text)
@@ -200,7 +200,7 @@ def test_corrupt_ownership_state_refused(tmp_path, gnome_state, text):
 
 def test_sync_timeout_and_malformed_backup(tmp_path, monkeypatch):
     monkeypatch.setenv('GNOME_TERMINAL_SERVICE', ':1.123')
-    with patch('crux.integrations.terminal_theme.shutil.which', return_value='tool'), patch('crux.integrations.terminal_theme.subprocess.run', side_effect=subprocess.TimeoutExpired('gsettings', 5)):
+    with patch('rat.integrations.terminal_theme.shutil.which', return_value='tool'), patch('rat.integrations.terminal_theme.subprocess.run', side_effect=subprocess.TimeoutExpired('gsettings', 5)):
         with pytest.raises(RuntimeError, match='timed out'):
             sync_gnome_profile('cobalt', tmp_path)
     assert not list(tmp_path.iterdir())

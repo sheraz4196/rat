@@ -1,12 +1,12 @@
 """Inspect and persist the display theme without losing unrelated TOML."""
 import typer
-from crux.cli.main import app
-from crux.core.text import safe_text
-from crux.cli.common import fail
-from crux.config.manager import load, update
-from crux.render.theme import THEMES, terminal_sequences
-from crux.core.terminal import detect
-from crux.integrations.terminal_theme import sync_gnome_profile, restore_gnome_profile
+from rat.cli.main import app
+from rat.core.text import safe_text
+from rat.cli.common import fail
+from rat.config.manager import load, update
+from rat.render.theme import THEMES, terminal_sequences
+from rat.core.terminal import detect
+from rat.integrations.terminal_theme import sync_gnome_profile, restore_gnome_profile
 
 
 @app.command()

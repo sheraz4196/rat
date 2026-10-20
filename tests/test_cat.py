@@ -4,8 +4,8 @@ from unittest.mock import patch
 import pytest
 from typer.testing import CliRunner
 
-from crux.cli.main import app
-from crux.cli.cat import detect_lexer, read_source
+from rat.cli.main import app
+from rat.cli.cat import detect_lexer, read_source
 
 
 @pytest.mark.parametrize('name,source,language', [
@@ -51,8 +51,8 @@ def test_errors_empty_file_and_multiple_files(tmp_path):
 
 
 def test_cobalt_highlighting_and_no_color(tmp_path, monkeypatch):
-    from crux.cli.cat import view
-    from crux.config.manager import load
+    from rat.cli.cat import view
+    from rat.config.manager import load
     from typer.main import get_command
     import typer
 

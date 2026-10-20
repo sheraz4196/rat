@@ -6,8 +6,8 @@ import sys
 from pathlib import Path
 import pytest
 from typer.testing import CliRunner
-from crux.cli.main import app
-from crux.integrations.manager import edit_profile, block, read_profile
+from rat.cli.main import app
+from rat.integrations.manager import edit_profile, block, read_profile
 
 
 @pytest.mark.parametrize('shell', ['bash', 'zsh', 'powershell'])
@@ -18,8 +18,8 @@ def test_roundtrip(tmp_path, shell, suffix):
     path.write_bytes(original)
     assert edit_profile(path, shell)
     assert not edit_profile(path, shell)
-    assert path.read_text().count('# >>> crux >>>') == 1
-    assert path.with_name('profile.crux-backup').read_bytes() == original
+    assert path.read_text().count('# >>> rat >>>') == 1
+    assert path.with_name('profile.rat-backup').read_bytes() == original
     assert edit_profile(path, shell, remove=True)
     assert path.read_bytes() == original
     assert not edit_profile(path, shell, remove=True)
@@ -27,7 +27,7 @@ def test_roundtrip(tmp_path, shell, suffix):
 
 def test_refuse_ambiguous(tmp_path):
     path = tmp_path / 'profile'
-    path.write_text('# >>> crux >>>\nbroken')
+    path.write_text('# >>> rat >>>\nbroken')
     with pytest.raises(ValueError): edit_profile(path, 'bash')
     assert path.read_text().endswith('broken')
     with pytest.raises(ValueError): block('cmd')
@@ -89,12 +89,12 @@ def test_other_shells_when_available(tmp_path, shell):
     path = tmp_path / ('profile.ps1' if shell == 'powershell' else 'profile')
     if shell == 'zsh':
         path.write_text("alias personal='echo alias-ok'\nalias git='echo native-git'\nls() { echo native-ls; }\npersonal_function() { echo function-ok; }\nexport PERSONAL=value\nPS1='original> '\n")
-        command = f'source "{path}"\npersonal\npersonal_function\nprint -r -- "$PERSONAL"\nprint pipe-ok | cat\ngit status\nls\ncrux_restore_prompt\n[[ $PS1 == "original> " ]] || exit 4\n'
+        command = f'source "{path}"\npersonal\npersonal_function\nprint -r -- "$PERSONAL"\nprint pipe-ok | cat\ngit status\nls\nrat_restore_prompt\n[[ $PS1 == "original> " ]] || exit 4\n'
         source_line, commands = command.split('\n', 1)
         args = [executable, '-f', '-c', source_line + '\neval ' + shlex.quote(commands)]
     else:
         path.write_text("function personal { 'alias-ok' }\nfunction personal_function { 'function-ok' }\nfunction git { 'native-git' }\n$env:PERSONAL='value'\nfunction prompt { 'original> ' }\n")
-        command = f"$ErrorActionPreference='Stop'; . '{path}'; personal; personal_function; $env:PERSONAL; 'pipe-ok' | Write-Output; $global:LASTEXITCODE=17; prompt; if ($global:LASTEXITCODE -ne 17) {{ exit 1 }}; git status; crux_restore_prompt; if ((prompt) -ne 'original> ') {{ exit 4 }}"
+        command = f"$ErrorActionPreference='Stop'; . '{path}'; personal; personal_function; $env:PERSONAL; 'pipe-ok' | Write-Output; $global:LASTEXITCODE=17; prompt; if ($global:LASTEXITCODE -ne 17) {{ exit 1 }}; git status; rat_restore_prompt; if ((prompt) -ne 'original> ') {{ exit 4 }}"
         args = [executable, '-NoProfile', '-Command', command]
     edit_profile(path, shell)
     result = subprocess.run(args, capture_output=True, text=True)
@@ -125,13 +125,13 @@ def test_atomic_failure(tmp_path, monkeypatch):
 
 @pytest.mark.skipif(os.name == 'nt', reason='POSIX executable stubs')
 def test_bash_command_routing(tmp_path):
-    """TTY output gets Crux; flags, other subcommands and pipes stay native."""
+    """TTY output gets Rat; flags, other subcommands and pipes stay native."""
     bash = shutil.which('bash')
     if not bash:
         pytest.skip('Bash unavailable')
     bindir = tmp_path / 'bin'
     bindir.mkdir()
-    for name in ('crux', 'git', 'ls', 'tree'):
+    for name in ('rat', 'git', 'ls', 'tree'):
         executable = bindir / name
         executable.write_text(f'#!/bin/sh\nprintf "{name}:%s\\n" "$*"\n')
         executable.chmod(0o755)
@@ -153,14 +153,14 @@ git status | cat
     result = subprocess.run([bash, '--noprofile', '--norc', '-c', script], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert result.stdout.splitlines() == [
-        'crux:_git status', 'git:status --porcelain', 'git:diff',
-        'crux:_ls', 'crux:_tree', 'git:status',
+        'rat:_git status', 'git:status --porcelain', 'git:diff',
+        'rat:_ls', 'rat:_tree', 'git:status',
     ]
 
 
 def test_upgrade_old_integration(tmp_path):
     path = tmp_path / 'profile'
-    path.write_text('before\n# >>> crux >>>\n# old prompt only\n# <<< crux <<<\nafter\n')
+    path.write_text('before\n# >>> rat >>>\n# old prompt only\n# <<< rat <<<\nafter\n')
     assert edit_profile(path, 'bash')
     assert 'function git {' not in path.read_text()
     assert 'unalias' not in path.read_text()
@@ -178,7 +178,7 @@ def test_bash_aliases_and_real_terminal(tmp_path, enhance_commands):
         pytest.skip('Bash unavailable')
     bindir = tmp_path / 'bin'
     bindir.mkdir()
-    for name in ('crux', 'git', 'ls', 'tree', 'cat'):
+    for name in ('rat', 'git', 'ls', 'tree', 'cat'):
         executable = bindir / name
         executable.write_text(f'#!/bin/sh\nprintf "{name}:%s\\n" "$*"\n')
         executable.chmod(0o755)
@@ -248,7 +248,7 @@ ls
 tree
 cat
 [ "$original_path" = "$PATH" ] || exit 4
-crux_restore_prompt
+rat_restore_prompt
 [ "$PS1" = 'original> ' ] || exit 5
 '''
     result = subprocess.run([bash, '--noprofile', '--norc', '-c', command], env=env, capture_output=True, text=True)
@@ -260,7 +260,7 @@ crux_restore_prompt
     assert after.stdout == result.stdout
 
 
-def test_keep_prompt_and_no_crux_dependency(tmp_path):
+def test_keep_prompt_and_no_rat_dependency(tmp_path):
     bash = shutil.which('bash')
     if not bash:
         pytest.skip('Bash unavailable')
@@ -286,8 +286,8 @@ def test_profile_symlink_backup_and_modes(tmp_path):
     link = tmp_path / 'profile-link'
     try:
         link.symlink_to(path)
-        path.with_name(path.name + '.crux-backup').unlink()
-        path.with_name(path.name + '.crux-backup').symlink_to(tmp_path / 'missing')
+        path.with_name(path.name + '.rat-backup').unlink()
+        path.with_name(path.name + '.rat-backup').symlink_to(tmp_path / 'missing')
     except OSError:
         pytest.skip('symlink creation unavailable')
     with pytest.raises(ValueError, match='symlink'):
@@ -306,7 +306,7 @@ def test_opt_in_tty_routes_and_native_streams(tmp_path):
         pytest.skip('Bash unavailable')
     bindir = tmp_path / 'bin'
     bindir.mkdir()
-    for name in ('crux', 'git', 'ls', 'tree'):
+    for name in ('rat', 'git', 'ls', 'tree'):
         executable = bindir / name
         executable.write_text(f'#!/bin/sh\nprintf "{name}:%s\\n" "$*"\n')
         executable.chmod(0o755)
@@ -348,7 +348,7 @@ git status | command cat
             os.close(slave)
     assert result.returncode == 0, result.stderr
     assert output.decode().splitlines() == [
-        'crux:_git status', 'crux:_ls', 'crux:_tree', f'crux:_cat -- {source}',
+        'rat:_git status', 'rat:_ls', 'rat:_tree', f'rat:_cat -- {source}',
         'git:status --porcelain', 'ls:-a', 'tree:--help', 'stdin-ok', 'dash-ok', 'raw', 'raw', 'git:status',
     ]
     assert (tmp_path / 'copy').read_bytes() == source.read_bytes()
@@ -359,9 +359,9 @@ def test_prompt_helper_collision_is_preserved(tmp_path):
     if not bash:
         pytest.skip('Bash unavailable')
     profile = tmp_path / 'profile'
-    profile.write_text('crux_restore_prompt() { echo personal-helper; }\n')
+    profile.write_text('rat_restore_prompt() { echo personal-helper; }\n')
     edit_profile(profile, 'bash')
-    result = subprocess.run([bash, '--noprofile', '--norc', '-c', f'source "{profile}"\ncrux_restore_prompt'], capture_output=True, text=True)
+    result = subprocess.run([bash, '--noprofile', '--norc', '-c', f'source "{profile}"\nrat_restore_prompt'], capture_output=True, text=True)
     assert result.returncode == 0 and result.stdout == 'personal-helper\n'
 
 

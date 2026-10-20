@@ -4,7 +4,7 @@
 from pygments.style import Style
 from pygments.token import Token, Comment, Keyword, Name, String, Number, Operator, Generic, Error
 from rich.syntax import PygmentsSyntaxTheme
-from crux.render.theme import TERMINAL_THEMES
+from rat.render.theme import TERMINAL_THEMES
 
 
 def syntax_theme(name):
@@ -26,5 +26,5 @@ def syntax_theme(name):
         styles = {token: foreground for token in styles}
         styles[Keyword] = 'bold ' + foreground
         styles[Generic.Heading] = 'bold ' + foreground
-    theme = type('CruxCodeStyle', (Style,), {'background_color': palette['background'], 'styles': styles})
+    theme = type('RatCodeStyle', (Style,), {'background_color': palette['background'], 'styles': styles})
     return PygmentsSyntaxTheme(theme)

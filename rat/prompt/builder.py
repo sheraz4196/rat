@@ -1,11 +1,11 @@
 import os
 from pathlib import Path
-from crux.config.manager import load
-from crux.core.environment import virtual_environment
-from crux.core.git import current_branch, in_repository, status
-from crux.core.text import safe_text
-from crux.core.terminal import detect
-from crux.render.theme import PROMPT_COLORS, terminal_sequences
+from rat.config.manager import load
+from rat.core.environment import virtual_environment
+from rat.core.git import current_branch, in_repository, status
+from rat.core.text import safe_text
+from rat.core.terminal import detect
+from rat.render.theme import PROMPT_COLORS, terminal_sequences
 
 
 def build(exit_status=0, path=None, configuration=None, shell="plain"):

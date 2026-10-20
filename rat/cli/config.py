@@ -1,10 +1,10 @@
 """Inspect and edit validated settings while retaining unrelated TOML."""
 import json
 import typer
-from crux.cli.main import app
-from crux.core.text import safe_text
-from crux.cli.common import context, fail
-from crux.config.manager import DEFAULTS, default_value, load, parse_value, update
+from rat.cli.main import app
+from rat.core.text import safe_text
+from rat.cli.common import context, fail
+from rat.config.manager import DEFAULTS, default_value, load, parse_value, update
 
 subapp = typer.Typer(help='Inspect or edit configuration.', invoke_without_command=True)
 app.add_typer(subapp, name='config')
@@ -57,8 +57,8 @@ def reset(key: str = typer.Argument(None), yes: bool = typer.Option(False, '--ye
             f'{section}.{name}': value for section, values in DEFAULTS.items() for name, value in values.items()
         }
         if key is None and not yes:
-            typer.confirm('Reset all CRUX settings to defaults? Unrelated TOML is retained.', abort=True)
+            typer.confirm('Reset all RAT settings to defaults? Unrelated TOML is retained.', abort=True)
         path = update(settings)
-        typer.echo(f'Reset {key or "all CRUX settings"}: {path}')
+        typer.echo(f'Reset {key or "all RAT settings"}: {path}')
     except (OSError, ValueError) as exc:
         fail(exc)

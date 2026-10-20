@@ -1,7 +1,7 @@
 import typer
-from crux.config.manager import load
-from crux.render.renderer import Renderer
-from crux.core.text import safe_text
+from rat.config.manager import load
+from rat.render.renderer import Renderer
+from rat.core.text import safe_text
 
 
 def context(ctx, no_color=False):
