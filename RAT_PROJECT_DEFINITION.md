@@ -1,12 +1,12 @@
-# CRUX
+# RAT
 
 > A cross-platform terminal enhancement toolkit that makes the command line more useful, readable, and personal — without replacing the user's shell or terminal emulator.
 
 ## 1. Project Definition
 
-**Project name:** CRUX
+**Project name:** RAT
 
-**CLI command:** `crux`
+**CLI command:** `rat`
 
 **Project type:** Open-source, local-first, cross-platform terminal enhancement toolkit
 
@@ -26,13 +26,13 @@
 
 ## 2. Vision
 
-CRUX should make the ordinary terminal feel modern, polished, informative, and personal.
+RAT should make the ordinary terminal feel modern, polished, informative, and personal.
 
-The goal is **not** to create another terminal emulator or shell. CRUX should work on top of the user's existing terminal and shell.
+The goal is **not** to create another terminal emulator or shell. RAT should work on top of the user's existing terminal and shell.
 
 The long-term vision is:
 
-> **CRUX turns the terminal from a basic command interface into a useful, beautiful, and customizable developer environment.**
+> **RAT turns the terminal from a basic command interface into a useful, beautiful, and customizable developer environment.**
 
 It should remain:
 - Local-first
@@ -47,7 +47,7 @@ It should remain:
 
 ### Do not replace the terminal
 
-CRUX should work inside existing environments such as:
+RAT should work inside existing environments such as:
 
 - Windows Terminal
 - GNOME Terminal
@@ -60,7 +60,7 @@ It should also work with existing shells rather than forcing users to migrate.
 
 ### Do not require cloud services
 
-CRUX must not require:
+RAT must not require:
 - an account
 - a cloud backend
 - an API key
@@ -99,11 +99,11 @@ while having no immediate visual information about:
 - command status
 - useful filesystem information
 
-Existing tools solve individual pieces of this problem, but CRUX aims to provide a coherent, cross-platform experience.
+Existing tools solve individual pieces of this problem, but RAT aims to provide a coherent, cross-platform experience.
 
 ## 5. Product Positioning
 
-CRUX is:
+RAT is:
 
 - A terminal enhancement toolkit
 - A modern CLI utility collection
@@ -111,7 +111,7 @@ CRUX is:
 - A developer environment information layer
 - A foundation for future terminal themes and plugins
 
-CRUX is **not**:
+RAT is **not**:
 
 - A terminal emulator
 - A replacement for Bash
@@ -129,7 +129,7 @@ Version 1 should be intentionally small and reliable.
 
 #### 6.1 Enhanced Prompt
 
-CRUX should provide an optional enhanced shell prompt showing useful context.
+RAT should provide an optional enhanced shell prompt showing useful context.
 
 Potential information:
 
@@ -151,7 +151,7 @@ Example:
 
 The prompt must be configurable so users can choose what is displayed.
 
-#### 6.2 `crux ls`
+#### 6.2 `rat ls`
 
 A modern, readable directory listing.
 
@@ -172,13 +172,13 @@ Example:
 Initial options may include:
 
 ```bash
-crux ls
-crux ls -a
-crux ls -l
-crux ls --size
+rat ls
+rat ls -a
+rat ls -l
+rat ls --size
 ```
 
-#### 6.3 `crux tree`
+#### 6.3 `rat tree`
 
 Display a readable directory tree.
 
@@ -199,20 +199,20 @@ Example:
 Possible options:
 
 ```bash
-crux tree
-crux tree --depth 2
-crux tree --depth 3
-crux tree --files
+rat tree
+rat tree --depth 2
+rat tree --depth 3
+rat tree --files
 ```
 
-#### 6.4 `crux doctor`
+#### 6.4 `rat doctor`
 
 Inspect the local environment and identify useful information or potential problems.
 
 Example:
 
 ```text
-CRUX Doctor
+RAT Doctor
 
 System
 ────────────────────────────
@@ -244,17 +244,17 @@ Warnings
 It should support machine-readable output later:
 
 ```bash
-crux doctor --json
+rat doctor --json
 ```
 
-#### 6.5 `crux git`
+#### 6.5 `rat git`
 
-CRUX should provide a readable presentation layer around common Git information.
+RAT should provide a readable presentation layer around common Git information.
 
 Initial command:
 
 ```bash
-crux git status
+rat git status
 ```
 
 Example:
@@ -277,24 +277,24 @@ Changes
 3 changed files
 ```
 
-CRUX should not attempt to replace Git.
+RAT should not attempt to replace Git.
 
 Git itself remains the source of truth.
 
-#### 6.6 `crux config`
+#### 6.6 `rat config`
 
-Allow users to inspect and eventually modify CRUX configuration.
+Allow users to inspect and eventually modify RAT configuration.
 
 Example:
 
 ```bash
-crux config
+rat config
 ```
 
 Potential output:
 
 ```text
-CRUX Configuration
+RAT Configuration
 
 Theme       default
 Prompt      enhanced
@@ -306,8 +306,8 @@ Git         enabled
 Later:
 
 ```bash
-crux config set icons false
-crux config set theme cobalt
+rat config set icons false
+rat config set theme cobalt
 ```
 
 ## 7. Future Theme System
@@ -346,25 +346,25 @@ This allows future themes such as:
 The user should eventually be able to select a theme with:
 
 ```bash
-crux theme set cobalt
+rat theme set cobalt
 ```
 
-The CRUX Cobalt theme may be inspired by the visual characteristics of the user's preferred Cobalt-style editor palette, but should be designed specifically for terminal readability rather than blindly copying another application's theme.
+The RAT Cobalt theme may be inspired by the visual characteristics of the user's preferred Cobalt-style editor palette, but should be designed specifically for terminal readability rather than blindly copying another application's theme.
 
 ## 8. Configuration
 
-CRUX should use TOML configuration.
+RAT should use TOML configuration.
 
 Linux/macOS:
 
 ```text
-~/.config/crux/config.toml
+~/.config/rat/config.toml
 ```
 
 Windows:
 
 ```text
-%APPDATA%\CRUX\config.toml
+%APPDATA%\RAT\config.toml
 ```
 
 Example:
@@ -393,10 +393,10 @@ Configuration paths should be resolved through a platform abstraction rather tha
 
 ## 9. Shell Integration
 
-CRUX will eventually provide:
+RAT will eventually provide:
 
 ```bash
-crux init
+rat init
 ```
 
 The command should:
@@ -406,45 +406,45 @@ The command should:
 3. Check terminal capabilities.
 4. Explain what will change.
 5. Create a backup before modifying shell configuration.
-6. Insert a clearly identifiable CRUX integration block.
+6. Insert a clearly identifiable RAT integration block.
 7. Enable the enhanced prompt.
 8. Provide a clean uninstall path.
 
 Example:
 
 ```text
-CRUX initialization
+RAT initialization
 
 Detected:
   OS: Linux
   Shell: bash
 
-CRUX will modify:
+RAT will modify:
   ~/.bashrc
 
 Backup:
-  ~/.bashrc.crux-backup
+  ~/.bashrc.rat-backup
 
 Continue? [Y/n]
 ```
 
-CRUX must never silently overwrite or destroy a user's shell configuration.
+RAT must never silently overwrite or destroy a user's shell configuration.
 
 Integration blocks should be clearly marked:
 
 ```bash
-# >>> crux >>>
+# >>> rat >>>
 ...
-# <<< crux <<<
+# <<< rat <<<
 ```
 
 This allows:
 
 ```bash
-crux uninstall
+rat uninstall
 ```
 
-to remove only CRUX's integration.
+to remove only RAT's integration.
 
 ## 10. Cross-Platform Architecture
 
@@ -471,7 +471,7 @@ core/
 └── environment.py
 ```
 
-The rest of CRUX should consume these abstractions.
+The rest of RAT should consume these abstractions.
 
 Supported environments should include:
 
@@ -496,9 +496,9 @@ Supported environments should include:
 ## 11. Proposed Architecture
 
 ```text
-crux/
+rat/
 │
-├── crux/
+├── rat/
 │   ├── __init__.py
 │   ├── __main__.py
 │   │
@@ -639,12 +639,12 @@ This is essential for future themes and alternate output modes.
 
 ## 14. Performance Requirements
 
-CRUX should feel instant.
+RAT should feel instant.
 
 Important targets:
 
 - Enhanced prompt normally under ~50ms.
-- `crux ls` should remain fast in large directories.
+- `rat ls` should remain fast in large directories.
 - Avoid unnecessary subprocess calls.
 - Cache information that does not need to be recomputed.
 - Do not execute expensive checks on every prompt render.
@@ -655,7 +655,7 @@ Performance should be tested rather than assumed.
 
 ## 15. Privacy and Security
 
-CRUX is local-first.
+RAT is local-first.
 
 By default:
 
@@ -668,13 +668,13 @@ By default:
 - No remote execution.
 - No network requirement.
 
-CRUX should only access files and system information required for the requested operation.
+RAT should only access files and system information required for the requested operation.
 
 Shell integration must be transparent and reversible.
 
 ## 16. Accessibility and Compatibility
 
-CRUX should support environments where visual features are unavailable.
+RAT should support environments where visual features are unavailable.
 
 Requirements:
 
@@ -688,7 +688,7 @@ Requirements:
 Example:
 
 ```bash
-crux ls --no-color
+rat ls --no-color
 ```
 
 Future environment detection should automatically reduce visual features when necessary.
@@ -708,15 +708,15 @@ Future environment detection should automatically reduce visual features when ne
 
 ### v0.2 — Core Commands
 
-- `crux ls`
-- `crux tree`
-- `crux doctor`
-- `crux git status`
-- `crux config`
+- `rat ls`
+- `rat tree`
+- `rat doctor`
+- `rat git status`
+- `rat config`
 
 ### v0.3 — Prompt
 
-- `crux init`
+- `rat init`
 - Enhanced prompt
 - Git context
 - Python environment
@@ -756,14 +756,14 @@ Future environment detection should automatically reduce visual features when ne
 Potential future features:
 
 ```text
-crux theme
-crux history
-crux projects
-crux ports
-crux processes
-crux open
-crux aliases
-crux notify
+rat theme
+rat history
+rat projects
+rat ports
+rat processes
+rat open
+rat aliases
+rat notify
 ```
 
 Additional functionality:
@@ -788,10 +788,10 @@ Additional functionality:
 
 ## 19. Long-Term Vision
 
-CRUX can eventually become a complete terminal experience layer:
+RAT can eventually become a complete terminal experience layer:
 
 ```text
-                         CRUX
+                         RAT
                           │
           ┌───────────────┼───────────────┐
           │               │               │
@@ -811,7 +811,7 @@ CRUX can eventually become a complete terminal experience layer:
                    Existing Terminal
 ```
 
-The user should be able to make CRUX look and behave according to their own workflow without giving up the tools they already know.
+The user should be able to make RAT look and behave according to their own workflow without giving up the tools they already know.
 
 ## 20. Project Principles
 
@@ -832,16 +832,16 @@ Every feature should be evaluated against these principles:
 
 ## 21. Initial Success Criteria
 
-CRUX v1 is successful when a new user can:
+RAT v1 is successful when a new user can:
 
 ```bash
-pip install crux
-crux doctor
-crux ls
-crux tree
-crux git status
-crux config
-crux init
+pip install rat
+rat doctor
+rat ls
+rat tree
+rat git status
+rat config
+rat init
 ```
 
 on Linux, macOS, or Windows and receive a polished, useful experience without:
@@ -853,7 +853,7 @@ on Linux, macOS, or Windows and receive a polished, useful experience without:
 - replacing their shell
 - replacing their terminal emulator
 
-The user should be able to uninstall CRUX cleanly and return to their original terminal environment.
+The user should be able to uninstall RAT cleanly and return to their original terminal environment.
 
 ## 22. First Development Milestone
 
@@ -862,15 +862,15 @@ The first implementation milestone should **not** be themes or animations.
 Build the foundation:
 
 1. Create the Python package.
-2. Configure the `crux` executable.
+2. Configure the `rat` executable.
 3. Implement platform detection.
 4. Implement terminal detection.
 5. Implement configuration loading.
 6. Implement the renderer abstraction.
 7. Add the default theme abstraction.
-8. Implement `crux doctor`.
+8. Implement `rat doctor`.
 9. Add tests.
-10. Then build `crux ls` and `crux tree`.
+10. Then build `rat ls` and `rat tree`.
 
 Once this foundation is stable, shell integration and the enhanced prompt can be built on top of it.
 
@@ -878,4 +878,4 @@ Once this foundation is stable, shell integration and the enhanced prompt can be
 
 ## Project Motto
 
-> **CRUX — Make the terminal yours.**
+> **RAT — Make the terminal yours.**
