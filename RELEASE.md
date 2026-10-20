@@ -25,14 +25,14 @@ Use local wheels with `PIP_NO_INDEX=1` and `PIP_FIND_LINKS=PATH` for offline ver
 
 Repository rename, pushing commits/tags and release publication require authenticated GitHub access. The user has authorized these operations for this rename. If access is unavailable, leave the validated changes committed locally and report publication as pending.
 
-After validation, rename the existing GitHub repository rather than creating a replacement, preserving issues, stars and history. With an authenticated GitHub CLI:
+GitHub currently reports the canonical repository as `sheraz4196/rat`, with the old Crux URL redirecting to it. The server-side rename is already complete. For reference, the rename operation is shown below; do not repeat it when already renamed:
 
 ```sh
 gh repo rename rat --repo sheraz4196/crux --yes
 git remote set-url origin git@github.com:sheraz4196/rat.git
 ```
 
-Update any external links/settings that cannot redirect. The clone-first testing guide intentionally retains the original URL with an explicit local `rat` directory; that URL redirects after a successful GitHub rename. Do not create another repository at the old name, which would replace the redirect.
+Update any external links/settings that cannot redirect. The clone-first testing guide uses the canonical Rat URL. The old Crux URL redirects to it. Do not create another repository at the old name, which would replace the redirect.
 
 Push the reviewed release commit on its branch. Create a new annotated tag at that exact commit only after local verification is complete, without moving old tags:
 

@@ -4,7 +4,7 @@ Rat needs **Python 3.11 or newer**. Install it once, connect your shell, and ope
 
 Rat is not published to PyPI yet. Install from this repository or a locally built wheel; do not use `pip install rat`.
 
-Existing Crux users: follow [MIGRATING.md](MIGRATING.md) first to remove the old integration and preserve configuration/recovery files. For a disposable, clone-first testing procedure, use [HUMAN_TESTING.md](HUMAN_TESTING.md). The original repository URL below remains usable through the GitHub rename.
+Existing Crux users: follow [MIGRATING.md](MIGRATING.md) first to remove the old integration and preserve configuration/recovery files. For a disposable, clone-first testing procedure, use [HUMAN_TESTING.md](HUMAN_TESTING.md). The repository now lives at `sheraz4196/rat`; old Crux URLs redirect there.
 
 ## Requirements
 
@@ -13,7 +13,7 @@ Existing Crux users: follow [MIGRATING.md](MIGRATING.md) first to remove the old
 | Python      | Python 3.11+, including `pip` and virtual-environment (`venv`) support. Keep Python installed after installing Rat.                                     |
 | Shell       | Bash or Zsh on Linux/macOS; PowerShell on Windows. Fish and Command Prompt (`cmd.exe`) integration are currently unsupported.                            |
 | Terminal    | A terminal supporting ANSI colours. Background, cursor, and palette changes require OSC 4/10/11/12 support; support varies by emulator.                  |
-| Source code | Download or clone [the Rat repository](https://github.com/sheraz4196/crux). The install commands below run from the folder containing `pyproject.toml`. |
+| Source code | Download or clone [the Rat repository](https://github.com/sheraz4196/rat). The install commands below run from the folder containing `pyproject.toml`. |
 | Internet    | Needed to download Python, installation tools, and dependencies unless you already have local packages/wheels. Rat runs offline after installation.     |
 | Git         | Optional for installation from a downloaded ZIP; required for Git status and repository information in the prompt.                                       |
 | Fonts       | A Unicode-capable font for prompt symbols. A Nerd Font is optional, useful for file icons.                                                               |

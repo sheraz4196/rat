@@ -1,12 +1,12 @@
 ```sh
-git clone https://github.com/sheraz4196/crux.git rat
+git clone https://github.com/sheraz4196/rat.git
 cd rat
 git checkout v0.1.1
 ```
 
 # Rat human testing guide
 
-The original clone URL is intentional: it works before the GitHub rename and GitHub redirects it afterward. The checkout directory is `rat`. Use this guide on native Windows, macOS, or any Linux distribution with Python 3.11+; WSL results count as Linux, not native Windows. Git must already be installed to run the first command. Internet is needed for dependency installation, but Rat runs offline.
+The checkout directory is `rat`. The release checkout ensures you test the renamed version even if the default branch is older. Use this guide on native Windows, macOS, or any Linux distribution with Python 3.11+; WSL results count as Linux, not native Windows. Git must already be installed to run the first command. Internet is needed for dependency installation, but Rat runs offline.
 
 Record `git rev-parse HEAD` before testing. For a preview branch, check out the maintainer's exact branch or commit before installation; do not assume the default branch contains the rename. Record OS/distribution/version, CPU architecture, Python version, shell/version, terminal/version, font, and whether this is a VM. Try the default terminal font first; a Nerd Font is optional.
 

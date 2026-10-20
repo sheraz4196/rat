@@ -67,4 +67,4 @@ The repository rename does not rename an existing local checkout directory. You 
 git remote set-url origin git@github.com:sheraz4196/rat.git
 ```
 
-GitHub normally redirects old repository URLs after a rename. Do not run the remote update before the server-side rename exists. The clone-first human guide uses the original URL with an explicit local `rat` directory so it works on both sides of the transition.
+GitHub normally redirects old repository URLs after a rename. Do not run the remote update before the server-side rename exists. The clone-first human guide uses the canonical Rat repository URL.
