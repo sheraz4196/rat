@@ -20,7 +20,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -e ".[dev]"
       - name: Require native platform integration shell
-        run: python -c "import shutil, sys; shell = 'pwsh' if sys.platform == 'win32' else 'zsh' if sys.platform == 'darwin' else 'bash'; assert shutil.which(shell), f'Required integration shell missing: {shell}'"
+        run: >-
+          python -c "import shutil, sys; shell = 'pwsh' if sys.platform == 'win32' else 'zsh' if sys.platform == 'darwin' else 'bash'; assert shutil.which(shell), f'Required integration shell missing: {shell}'"
       - run: python -m pytest -q -rs
       - run: python -m build
       - name: Verify wheel in a clean environment
