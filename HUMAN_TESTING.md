@@ -11,6 +11,65 @@ Record `git rev-parse HEAD` before testing. For a preview branch, check out the 
 
 If Crux is already installed, follow [MIGRATING.md](MIGRATING.md) first. Start in a fresh terminal tab and use the disposable profile/configuration below before changing your normal shell. First complete the installation section for your OS, then return to the shared checks. Do not run all three OS installation sections.
 
+## Linux installation and cleanup (any distribution)
+
+Use Bash or Zsh. Fish and cmd integration are unsupported. Check `python3 --version` (3.11+), `git --version` and `bash --version`. Install missing Python/pip/venv/Git using your distribution's package manager. On older releases, install a supported Python separately; package names vary by distribution.
+
+For Ubuntu/Debian, typical prerequisites are `sudo apt install python3 python3-pip python3-venv git`; Fedora commonly uses `sudo dnf install python3 python3-pip git`; Arch commonly uses `sudo pacman -S python python-pip git`. Confirm the installed Python version afterward. Run the project installation as your normal user.
+
+In the cloned repository, in a dedicated Bash testing tab:
+
+```sh
+python3 -m venv .venv-test
+. .venv-test/bin/activate
+python -m pip install '.[dev]'
+export RAT_TEST_DIR="$(mktemp -d)"
+export XDG_CONFIG_HOME="$RAT_TEST_DIR/config"
+# Prevent theme commands from syncing your real GNOME default profile.
+unset GNOME_TERMINAL_SERVICE
+rat install --shell bash --profile "$RAT_TEST_DIR/bashrc" --dry-run
+printf '# rat human test\n' > "$RAT_TEST_DIR/bashrc"
+cp "$RAT_TEST_DIR/bashrc" "$RAT_TEST_DIR/original"
+rat install --shell bash --profile "$RAT_TEST_DIR/bashrc" --yes
+rat install --shell bash --profile "$RAT_TEST_DIR/bashrc" --yes
+bash --noprofile --rcfile "$RAT_TEST_DIR/bashrc" -i
+```
+
+Expected: the dry run does not create a profile. Installation creates one Rat block and a `.rat-backup` containing the original comment; a second install keeps both unchanged. The child Bash displays Rat's prompt. Run the shared checks in that child shell. Check pipes and redirection:
+
+```sh
+rat ls --json | python -m json.tool
+rat ls > "$RAT_TEST_DIR/listing.txt"
+python -c 'import os; from pathlib import Path; assert "\x1b" not in (Path(os.environ["RAT_TEST_DIR"])/"listing.txt").read_text()'
+```
+
+Type `exit` once to return to the parent Bash. Then:
+
+```sh
+rat uninstall --shell bash --profile "$RAT_TEST_DIR/bashrc" --yes
+cmp "$RAT_TEST_DIR/bashrc" "$RAT_TEST_DIR/original"
+```
+
+Expected: `cmp` prints nothing and exits zero. Repeating uninstall is a harmless no-op. Optional: repeat with `--enhance-commands` in the disposable profile and confirm native commands handle options/pipes/redirection; existing aliases/functions must survive. Do not use that option with PowerShell.
+
+For Linux/Zsh, use the macOS Zsh profile procedure below with your Linux Python installation. Record it as a separate shell result.
+
+Also check the supported Linux source installer separately in a disposable home:
+
+```sh
+python scripts/verify_installer.py --source .
+```
+
+Expected: the script reports isolated installation, backup, repeat-install and uninstall checks passed. It needs dependency downloads unless supplied `--wheelhouse PATH` containing all required wheels.
+
+After all shared and optional checks, in the parent testing tab:
+
+```sh
+deactivate
+```
+
+Close the dedicated tab to discard the exported test configuration and GNOME environment change. You can delete the repository's `.venv-test` and the temporary directory printed by `echo "$RAT_TEST_DIR"` after inspecting the paths; neither is your normal Python environment or Rat config. Keep failure logs before cleanup.
+
 ## Shared command checks
 
 Run from the repository root after activating the testing environment for your OS:
