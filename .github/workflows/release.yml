@@ -5,7 +5,12 @@ on:
 permissions:
   contents: write
 jobs:
+  validate:
+    uses: ./.github/workflows/tests.yml
+    permissions:
+      contents: read
   release:
+    needs: validate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +25,7 @@ jobs:
           version = tomllib.loads(Path('pyproject.toml').read_text())['project']['version']
           assert os.environ['GITHUB_REF_NAME'] == 'v' + version
           namespace = {}
-          exec(Path('crux/__init__.py').read_text(), namespace)
+          exec(Path('rat/__init__.py').read_text(), namespace)
           assert namespace['__version__'] == version
           PY
       - run: python -m pip install -e ".[dev]"
@@ -28,9 +33,9 @@ jobs:
       - run: python -m build
       - name: Test source distribution
         run: |
-          mkdir "$RUNNER_TEMP/crux-sdist"
-          tar -xzf dist/*.tar.gz -C "$RUNNER_TEMP/crux-sdist"
-          cd "$RUNNER_TEMP/crux-sdist"/crux_terminal-*
+          mkdir "$RUNNER_TEMP/rat-sdist"
+          tar -xzf dist/*.tar.gz -C "$RUNNER_TEMP/rat-sdist"
+          cd "$RUNNER_TEMP/rat-sdist"/rat_terminal-*
           python -m pytest -q -rs
       - name: Verify wheel and source installer
         run: |
@@ -42,4 +47,4 @@ jobs:
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/*.whl dist/*.tar.gz dist/SHA256SUMS --verify-tag --title "CRUX $GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md
+        run: gh release create "$GITHUB_REF_NAME" dist/*.whl dist/*.tar.gz dist/SHA256SUMS --verify-tag --title "Rat $GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md
