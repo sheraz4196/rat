@@ -1,6 +1,7 @@
 ```sh
 git clone https://github.com/sheraz4196/crux.git rat
 cd rat
+git checkout v0.1.1
 ```
 
 # Rat human testing guide
