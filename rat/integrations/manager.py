@@ -154,6 +154,8 @@ def read_profile(path):
 def edit_profile(path, shell, remove=False, enhance_commands=False, keep_prompt=False):
     path = Path(path)
     text = read_profile(path)
+    if not remove and ('# >>> crux >>>' in text or '# <<< crux <<<' in text):
+        raise ValueError('Crux integration found. Run crux uninstall for this shell/profile, reopen the shell, then install Rat. See MIGRATING.md.')
     if remove:
         updated = PATTERN.sub('', text)
     else:

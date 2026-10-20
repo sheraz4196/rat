@@ -11,6 +11,19 @@ from rat.integrations.manager import edit_profile, block, read_profile
 
 
 @pytest.mark.parametrize('shell', ['bash', 'zsh', 'powershell'])
+@pytest.mark.parametrize('marker', ['# >>> crux >>>', '# <<< crux <<<'])
+def test_legacy_crux_integration_requires_explicit_migration(tmp_path, shell, marker):
+    profile = tmp_path / 'profile'
+    original = '# personal config\n' + marker + '\n'
+    profile.write_text(original, encoding='utf-8')
+    with pytest.raises(ValueError, match='crux uninstall'):
+        edit_profile(profile, shell)
+    assert profile.read_text(encoding='utf-8') == original
+    assert not profile.with_name('profile.rat-backup').exists()
+    assert not edit_profile(profile, shell, remove=True)
+
+
+@pytest.mark.parametrize('shell', ['bash', 'zsh', 'powershell'])
 @pytest.mark.parametrize('suffix', ['', '\n', '\r\n'])
 def test_roundtrip(tmp_path, shell, suffix):
     path = tmp_path / 'profile'
