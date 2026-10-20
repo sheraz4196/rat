@@ -4,3 +4,4 @@ include RELEASE.md V0.2_IMPLEMENTATION.md
 recursive-include scripts *.py
 
 include LICENSE RELEASE_NOTES.md
+include HUMAN_TESTING.md MIGRATING.md RAT_PROJECT_DEFINITION.md
