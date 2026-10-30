@@ -6,8 +6,15 @@ __pycache__/
 *.egg-info/
 build/
 dist/
-/plan
-/contexts
+/plan/
+/contexts/
+!/plan/
+!/contexts/
+/plan/*
+/contexts/*
+!/plan/plan-rat-enhancements.md
+!/plan/priority0-baseline.md
+!/contexts/RAT_CURRENT_CONTEXT.md
 
 # I KEEP GITHUB WORKFLOW LOGS HERE WHEN THEY FAIL TO FIX THEM
 /logs.txt
